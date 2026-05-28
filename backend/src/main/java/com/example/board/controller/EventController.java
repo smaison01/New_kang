@@ -31,6 +31,11 @@ public class EventController {
         return eventService.save(event);
     }
 
+    @PutMapping("/{id}")
+    public Event update(@PathVariable Long id, @RequestBody Event event) {
+        return eventService.update(id, event);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         eventService.delete(id);

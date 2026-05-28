@@ -113,4 +113,22 @@
 .event-title { font-size: 0.95rem; font-weight: 600; color: #1a1a2e; }
 .event-desc { font-size: 0.82rem; color: #888; }
 
+.event-actions { display: flex; gap: 6px; flex-shrink: 0; }
 .event-item button { padding: 5px 12px; font-size: 0.8rem; }
+
+.event-item.editing {
+  border-left-color: #f7a34f;
+  background: #fffaf4;
+}
+
+.form-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #4f6ef7;
+  margin-bottom: 2px;
+}
+
+.event-form .form-buttons {
+  display: flex;
+  gap: 8px;
+}

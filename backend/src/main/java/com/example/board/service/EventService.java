@@ -25,6 +25,14 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    public Event update(Long id, Event updated) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("일정을 찾을 수 없습니다."));
+        event.setTitle(updated.getTitle());
+        event.setDescription(updated.getDescription());
+        return eventRepository.save(event);
+    }
+
     public void delete(Long id) {
         eventRepository.deleteById(id);
     }
