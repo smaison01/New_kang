@@ -1,0 +1,116 @@
+.calendar-layout {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.calendar-wrap .react-calendar {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 16px;
+  font-family: 'Segoe UI', sans-serif;
+  width: 380px;
+}
+
+.react-calendar__tile--active {
+  background: #4f6ef7 !important;
+  border-radius: 6px;
+}
+
+.react-calendar__tile--now {
+  background: #eef1ff;
+  border-radius: 6px;
+}
+
+.react-calendar__tile:hover {
+  background: #f0f3ff;
+  border-radius: 6px;
+}
+
+.react-calendar__navigation button:hover {
+  background: #f0f3ff;
+  border-radius: 6px;
+}
+
+.event-dot {
+  width: 6px;
+  height: 6px;
+  background: #4f6ef7;
+  border-radius: 50%;
+  margin: 2px auto 0;
+}
+
+.event-panel {
+  flex: 1;
+  min-width: 280px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 24px;
+}
+
+.event-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.event-panel-header h2 {
+  font-size: 1.1rem;
+  color: #1a1a2e;
+  font-weight: 600;
+}
+
+.event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f7f9ff;
+  border-radius: 8px;
+}
+
+.event-form input {
+  padding: 9px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.event-form input:focus { outline: none; border-color: #4f6ef7; }
+
+.event-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.no-event {
+  color: #bbb;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #f7f9ff;
+  border-radius: 8px;
+  border-left: 3px solid #4f6ef7;
+}
+
+.event-info { display: flex; flex-direction: column; gap: 3px; }
+.event-title { font-size: 0.95rem; font-weight: 600; color: #1a1a2e; }
+.event-desc { font-size: 0.82rem; color: #888; }
+
+.event-item button { padding: 5px 12px; font-size: 0.8rem; }

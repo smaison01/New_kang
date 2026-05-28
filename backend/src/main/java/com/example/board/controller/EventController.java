@@ -1,0 +1,39 @@
+package com.example.board.controller;
+
+import com.example.board.entity.Event;
+import com.example.board.service.EventService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/events")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
+public class EventController {
+
+    private final EventService eventService;
+
+    @GetMapping
+    public List<Event> getAll() {
+        return eventService.findAll();
+    }
+
+    @GetMapping("/date/{date}")
+    public List<Event> getByDate(@PathVariable String date) {
+        return eventService.findByDate(date);
+    }
+
+    @PostMapping
+    public Event create(@RequestBody Event event) {
+        return eventService.save(event);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        eventService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}

@@ -1,0 +1,51 @@
+.page { padding: 40px 36px; }
+.page-title { font-size: 1.8rem; font-weight: 700; color: #1a1a2e; margin-bottom: 28px; }
+
+.post-form {
+  background: white;
+  padding: 24px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  margin-bottom: 24px;
+}
+.post-form h2 { font-size: 1rem; color: #555; margin-bottom: 14px; }
+.post-form input, .post-form textarea {
+  width: 100%; padding: 10px 12px; margin-bottom: 10px;
+  border: 1px solid #e0e0e0; border-radius: 6px; font-size: 0.95rem; resize: vertical;
+}
+.post-form input:focus, .post-form textarea:focus { outline: none; border-color: #4f6ef7; }
+
+.form-buttons { display: flex; gap: 8px; margin-top: 4px; }
+
+button {
+  padding: 8px 18px; border: none; border-radius: 6px; cursor: pointer;
+  font-size: 0.9rem; background: #4f6ef7; color: white; transition: background 0.2s;
+}
+button:hover { background: #3a58e0; }
+button.danger { background: #e74c3c; }
+button.danger:hover { background: #c0392b; }
+button[type="button"] { background: #aaa; }
+button[type="button"]:hover { background: #888; }
+
+.post-detail {
+  background: white; padding: 24px; border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 24px;
+}
+.post-detail h2 { font-size: 1.2rem; margin-bottom: 8px; }
+.post-detail .meta { font-size: 0.82rem; color: #999; margin-bottom: 14px; }
+.post-detail .content { line-height: 1.7; white-space: pre-wrap; margin-bottom: 20px; }
+
+.post-table {
+  width: 100%; border-collapse: collapse; background: white;
+  border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.post-table th {
+  background: #4f6ef7; color: white;
+  padding: 12px 16px; text-align: left; font-size: 0.88rem; font-weight: 600;
+}
+.post-table td { padding: 12px 16px; border-bottom: 1px solid #f2f2f2; font-size: 0.9rem; }
+.post-table tr:last-child td { border-bottom: none; }
+.post-table tr:hover td { background: #f7f9ff; }
+.title-link { color: #4f6ef7; cursor: pointer; font-weight: 500; }
+.title-link:hover { text-decoration: underline; }
+.post-table td button { padding: 5px 12px; font-size: 0.8rem; margin-right: 4px; }
