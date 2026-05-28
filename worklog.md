@@ -47,3 +47,21 @@
 ### 교훈
 > **Windows .cmd 파일에는 한글(비ASCII) 문자를 쓰지 말 것.**  
 > 경로 변수는 `set VAR=%~dp0` 로 미리 분리한 뒤 `cmd /k "..."` 안에서 사용할 것.
+
+---
+
+## 2026-05-28 — JAVA_HOME 재시작 시 반복 오류
+
+### 문제
+서버 재시작마다 `JAVA_HOME is not defined correctly` 오류 발생.  
+PowerShell로 User 레벨 환경변수를 설정했지만, IntelliJ 터미널 등 일부 터미널은 재시작 없이는 새 환경변수를 반영하지 않음.
+
+### 해결
+`mvnw.cmd` 최상단에 폴백 추가:
+```bat
+if not defined JAVA_HOME set JAVA_HOME=C:\Program Files\Microsoft\jdk-21.0.11.10-hotspot
+```
+
+### 교훈
+> 환경변수 의존 스크립트는 **폴백 경로를 스크립트 안에 명시**할 것.  
+> `if not defined VAR set VAR=기본값` 패턴으로 외부 환경과 무관하게 동작 보장.
