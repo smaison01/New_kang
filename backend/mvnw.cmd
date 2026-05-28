@@ -1,5 +1,5 @@
 @echo off
-if not defined JAVA_HOME set JAVA_HOME=C:\Program Files\Microsoft\jdk-21.0.11.10-hotspot
+set JAVA_HOME=C:\Program Files\Microsoft\jdk-21.0.11.10-hotspot
 set MAVEN_DIR=%~dp0.mvn\wrapper\apache-maven
 set MAVEN_ZIP=%~dp0.mvn\wrapper\apache-maven.zip
 set MAVEN_URL=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.9/apache-maven-3.9.9-bin.zip
