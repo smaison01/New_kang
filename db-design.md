@@ -68,3 +68,72 @@ spring.datasource.username=root
 spring.datasource.password=비밀번호
 spring.jpa.hibernate.ddl-auto=update
 ```
+
+---
+
+## PostgreSQL + Docker 전환 예정
+
+### 1. Docker Compose 파일 생성
+프로젝트 루트에 `docker-compose.yml` 생성:
+```yaml
+version: '3.8'
+services:
+  postgres:
+    image: postgres:16
+    container_name: board-db
+    environment:
+      POSTGRES_DB: boarddb
+      POSTGRES_USER: board
+      POSTGRES_PASSWORD: board1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+```
+
+### 2. Docker 명령어
+```bash
+# PostgreSQL 컨테이너 시작
+docker-compose up -d
+
+# 컨테이너 중지 (데이터 유지)
+docker-compose stop
+
+# 컨테이너 + 데이터 전부 삭제
+docker-compose down -v
+```
+
+### 3. pom.xml 의존성 교체
+H2 제거 후 PostgreSQL 드라이버 추가:
+```xml
+<!-- 제거 -->
+<dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <scope>runtime</scope>
+</dependency>
+
+<!-- 추가 -->
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+### 4. application.properties 수정
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/boarddb
+spring.datasource.username=board
+spring.datasource.password=board1234
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+```
+
+### 5. Docker 설치 방법 (미설치 시)
+- Docker Desktop 다운로드: https://www.docker.com/products/docker-desktop
+- 설치 후 재시작, `docker --version` 으로 확인
