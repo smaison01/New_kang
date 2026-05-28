@@ -1,4 +1,8 @@
 ### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
@@ -28,3 +32,26 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Windows ###
+Thumbs.db
+
+### Spring Boot / Maven ###
+backend/target/
+*.jar
+*.war
+*.class
+*.log
+backend/.mvn/wrapper/maven-wrapper.jar
+
+### Node.js / React / Vite ###
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+### Environment / Secrets ###
+.env
+.env.local
+.env.*.local
