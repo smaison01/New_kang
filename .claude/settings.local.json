@@ -7,7 +7,9 @@
       "PowerShell(gh auth *)",
       "PowerShell(gh repo *)",
       "PowerShell($env:PATH = [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"User\"\\); cd \"C:\\\\Users\\\\kanghyeji\\\\IdeaProjects\\\\New_kang\"; git status)",
-      "PowerShell(git *)"
+      "PowerShell(git *)",
+      "PowerShell(Get-ChildItem -Recurse \"C:\\\\Users\\\\kanghyeji\\\\IdeaProjects\\\\New_kang\" | Where-Object { !$_.PSIsContainer } | Select-Object FullName)",
+      "PowerShell(java *)"
     ]
   }
 }

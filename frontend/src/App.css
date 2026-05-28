@@ -1,0 +1,125 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f5f5;
+  color: #333;
+}
+
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 24px;
+  color: #1a1a2e;
+}
+
+.post-form {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 24px;
+}
+
+.post-form h2 {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  color: #444;
+}
+
+.post-form input,
+.post-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  resize: vertical;
+}
+
+.post-form input:focus,
+.post-form textarea:focus {
+  outline: none;
+  border-color: #4f6ef7;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+button {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  background: #4f6ef7;
+  color: white;
+  transition: background 0.2s;
+}
+
+button:hover { background: #3a58e0; }
+button.danger { background: #e74c3c; }
+button.danger:hover { background: #c0392b; }
+button[type="button"] { background: #aaa; }
+button[type="button"]:hover { background: #888; }
+
+.post-detail {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 24px;
+}
+
+.post-detail h2 { font-size: 1.3rem; margin-bottom: 8px; }
+.post-detail .meta { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+.post-detail .content { line-height: 1.7; white-space: pre-wrap; margin-bottom: 20px; }
+
+.post-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.post-table th {
+  background: #4f6ef7;
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.post-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.9rem;
+}
+
+.post-table tr:last-child td { border-bottom: none; }
+.post-table tr:hover td { background: #f9f9ff; }
+
+.title-link {
+  color: #4f6ef7;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.title-link:hover { text-decoration: underline; }
+
+.post-table td button {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  margin-right: 4px;
+}
