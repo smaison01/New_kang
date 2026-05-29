@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>일정 관리</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #ffffff;
+      color: #37352f;
+    }
+
+    /* ── 레이아웃 ── */
+    .page { max-width: 1100px; margin: 0 auto; padding: 40px 48px; }
+
+    /* ── 타이틀 ── */
+    .page-emoji { font-size: 2.4rem; margin-bottom: 4px; }
+    .page-title { font-size: 1.9rem; font-weight: 700; color: #37352f; }
+    .page-desc  { margin-top: 6px; font-size: 0.875rem; color: #9b9a97; margin-bottom: 20px; }
+    .divider    { border: none; border-top: 1px solid #e9e9e7; margin: 18px 0; }
+
+    /* ── 섹션 레이블 ── */
+    .section-label {
+      font-size: 0.7rem; font-weight: 600; color: #9b9a97;
+      letter-spacing: .07em; text-transform: uppercase; margin-bottom: 8px;
+    }
+
+    /* ── 그룹박스 ── */
+    .groupbox {
+      border: 1px solid #e9e9e7; border-radius: 8px;
+      padding: 14px 18px; margin-bottom: 16px;
+      background: #f7f6f3;
+    }
+    .groupbox-row {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+
+    /* ── 인풋 ── */
+    .ws-input, .ws-date {
+      padding: 6px 10px; border: 1px solid #e9e9e7; border-radius: 4px;
+      font-size: 0.875rem; color: #37352f; background: #fff; font-family: inherit;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .ws-input:focus, .ws-date:focus {
+      outline: none; border-color: #a8a29e;
+      box-shadow: 0 0 0 2px rgba(37,99,235,.08);
+    }
+    .ws-input-flex { flex: 1; min-width: 200px; }
+    .ws-input-sm   { padding: 4px 8px; font-size: .82rem; }
+    .ws-date       { width: 136px; }
+
+    /* ── 레이블 ── */
+    .form-label { font-size: .8rem; color: #9b9a97; font-weight: 500; white-space: nowrap; }
+    .sep        { color: #c7c4bf; font-size: .9rem; }
+
+    /* ── 툴바 ── */
+    .toolbar {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 10px; margin-bottom: 8px;
+    }
+    .filter-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .total-chip {
+      font-size: .78rem; color: #9b9a97; background: #f1f1ef;
+      padding: 3px 12px; border-radius: 20px; border: 1px solid #e9e9e7;
+    }
+
+    /* ── 일괄 삭제 바 ── */
+    .bulk-bar {
+      display: flex; align-items: center; gap: 8px;
+      min-height: 34px; margin-bottom: 6px;
+    }
+    .bulk-dot  { width: 8px; height: 8px; background: #e03e3e; border-radius: 50%; flex-shrink: 0; }
+    .bulk-text { font-size: .82rem; color: #e03e3e; font-weight: 500; }
+
+    /* ── 버튼 ── */
+    .ws-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 5px 13px; border: 1px solid #e9e9e7; border-radius: 4px;
+      cursor: pointer; font-size: .83rem; color: #37352f; background: #fff;
+      font-family: inherit; transition: background .1s; white-space: nowrap;
+    }
+    .ws-btn:hover { background: #f1f1ef; }
+    .ws-btn-sm    { padding: 3px 11px; font-size: .78rem; }
+    .ws-btn-primary { background: #37352f; color: #fff; border-color: #37352f; }
+    .ws-btn-primary:hover { background: #1a1a18; }
+    .ws-btn-confirm { background: #2eaadc; color: #fff; border-color: #2eaadc; }
+    .ws-btn-confirm:hover { background: #1c9bc9; }
+    .ws-btn-danger  { color: #e03e3e; border-color: #ffa8a8; background: #fff5f5; }
+    .ws-btn-danger:hover { background: #ffe3e3; }
+
+    /* ── 그리드(테이블) ── */
+    .ws-grid {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border: 1px solid #e9e9e7; border-radius: 8px; overflow: hidden;
+    }
+    .ws-grid th {
+      background: #f7f6f3; color: #9b9a97; padding: 10px 14px;
+      text-align: left; font-size: .7rem; font-weight: 600;
+      letter-spacing: .05em; text-transform: uppercase;
+      border-bottom: 1px solid #e9e9e7;
+    }
+    .ws-grid td {
+      padding: 10px 14px; border-bottom: 1px solid #f1f1ef;
+      font-size: .875rem; vertical-align: middle; color: #37352f;
+    }
+    .ws-grid tbody tr:last-child td { border-bottom: none; }
+    .ws-grid tbody tr:hover td      { background: #f7f6f3; }
+    .ws-grid tr.row-checked td      { background: #fef9f9; }
+
+    .td-chk     { width: 40px; text-align: center; }
+    .td-num     { width: 50px; color: #c7c4bf; font-size: .8rem; }
+    .td-date    { width: 250px; }
+    .td-actions { width: 120px; white-space: nowrap; }
+
+    input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: #37352f; }
+
+    /* ── 날짜 태그 ── */
+    .date-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #f1f1ef; border: 1px solid #e9e9e7; border-radius: 4px;
+      padding: 3px 9px; font-size: .8rem; color: #37352f; font-weight: 500;
+    }
+
+    /* ── 그리드 인라인 인풋 ── */
+    .grid-input {
+      width: 100%; padding: 4px 8px; border: 1px solid #a8a29e;
+      border-radius: 4px; font-size: .875rem; background: #fff; font-family: inherit;
+    }
+    .grid-input:focus { outline: none; border-color: #2eaadc; box-shadow: 0 0 0 2px rgba(46,170,220,.15); }
+    .grid-date { width: 118px; padding: 4px 8px; border: 1px solid #e9e9e7; border-radius: 4px; font-size: .8rem; background: #fff; font-family: inherit; }
+    .grid-date:focus { outline: none; border-color: #2eaadc; }
+
+    .empty-row td { text-align: center; color: #c7c4bf; padding: 32px 0; }
+
+    /* ── 토스트 ── */
+    #toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: #37352f; color: #fff;
+      padding: 10px 20px; border-radius: 6px;
+      font-size: .875rem; opacity: 0; transition: opacity .3s;
+      pointer-events: none; z-index: 9999;
+    }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+<div class="page" id="app">
+
+  <!-- 타이틀 -->
+  <div class="page-emoji">🗂️</div>
+  <h1 class="page-title">일정 관리</h1>
+  <p class="page-desc">전체 일정을 조회하고 관리합니다.</p>
+  <hr class="divider" />
+
+  <!-- ① 신규 등록 -->
+  <div class="section-label">신규 일정 등록</div>
+  <div class="groupbox">
+    <div class="groupbox-row">
+      <span class="form-label">기간</span>
+      <input class="ws-date" type="date" id="inp_addStart" />
+      <span class="sep">→</span>
+      <input class="ws-date" type="date" id="inp_addEnd" />
+      <span class="form-label" style="margin-left:12px;">내용</span>
+      <input class="ws-input ws-input-flex" type="text" id="inp_addContent"
+             placeholder="일정 내용을 입력하세요" />
+      <button class="ws-btn ws-btn-primary" onclick="fn_add()">+ 등록</button>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ② 검색 조건 -->
+  <div class="section-label">조회 조건</div>
+  <div class="toolbar">
+    <div class="filter-group">
+      <input class="ws-date" type="date" id="inp_searchStart" />
+      <span class="sep">→</span>
+      <input class="ws-date" type="date" id="inp_searchEnd" />
+      <button class="ws-btn ws-btn-confirm ws-btn-sm" onclick="fn_search()">조회</button>
+      <button class="ws-btn ws-btn-sm" onclick="fn_reset()">초기화</button>
+    </div>
+    <span class="total-chip" id="lbl_total">전체 0건</span>
+  </div>
+
+  <!-- ③ 일괄 삭제 바 -->
+  <div class="bulk-bar" id="bulk_bar" style="display:none;">
+    <span class="bulk-dot"></span>
+    <span class="bulk-text" id="bulk_text">0건 선택됨</span>
+    <button class="ws-btn ws-btn-danger ws-btn-sm" onclick="fn_bulkDelete()">선택 삭제</button>
+  </div>
+  <div style="min-height:34px;margin-bottom:6px;" id="bulk_placeholder"></div>
+
+  <!-- ④ 그리드 -->
+  <table class="ws-grid">
+    <thead>
+      <tr>
+        <th class="td-chk">
+          <input type="checkbox" id="chk_all" onchange="fn_checkAll(this.checked)" />
+        </th>
+        <th class="td-num">#</th>
+        <th class="td-date">날짜 ↓</th>
+        <th>내용</th>
+        <th class="td-actions">관리</th>
+      </tr>
+    </thead>
+    <tbody id="grid_body"></tbody>
+  </table>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const BASE_URL = "http://localhost:8080/api/events";
+  let eventData  = [];
+
+  /* ── 초기화 ── */
+  window.onload = function () {
+    const today = getToday();
+    document.getElementById("inp_addStart").value = today;
+    document.getElementById("inp_addEnd").value   = today;
+    fn_search();
+  };
+
+  function getToday() {
+    return new Date().toLocaleDateString("sv-SE");
+  }
+
+  /* ── 토스트 ── */
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2200);
+  }
+
+  /* ── 전체 조회 ── */
+  function fn_search() {
+    const s = document.getElementById("inp_searchStart").value;
+    const e = document.getElementById("inp_searchEnd").value;
+    let url  = BASE_URL;
+    if (s && e) url += `?startDate=${s}&endDate=${e}`;
+
+    fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        eventData = data;
+        renderGrid();
+        updateBulkBar();
+      })
+      .catch(() => showToast("조회 중 오류가 발생했습니다."));
+  }
+
+  /* ── 초기화 ── */
+  function fn_reset() {
+    document.getElementById("inp_searchStart").value = "";
+    document.getElementById("inp_searchEnd").value   = "";
+    fn_search();
+  }
+
+  /* ── 그리드 렌더링 ── */
+  function renderGrid() {
+    const tbody = document.getElementById("grid_body");
+    document.getElementById("lbl_total").textContent = `전체 ${eventData.length}건`;
+    document.getElementById("chk_all").checked = false;
+
+    if (eventData.length === 0) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="5">등록된 일정이 없습니다.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = eventData.map((ev, idx) => {
+      const no      = eventData.length - idx;
+      const dateTag = ev.startDate === ev.endDate
+        ? `📅 ${ev.startDate}`
+        : `📅 ${ev.startDate} → ${ev.endDate}`;
+
+      return `
+      <tr id="row_${ev.id}" data-id="${ev.id}">
+        <td class="td-chk">
+          <input type="checkbox" class="row-chk" data-id="${ev.id}"
+                 onchange="updateBulkBar()" />
+        </td>
+        <td class="td-num">${no}</td>
+        <td class="td-date">
+          <div id="view_date_${ev.id}">
+            <span class="date-tag">${dateTag}</span>
+          </div>
+          <div id="edit_date_${ev.id}" style="display:none;display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
+            <input class="grid-date" type="date" id="es_${ev.id}" value="${ev.startDate}" />
+            <span class="sep">→</span>
+            <input class="grid-date" type="date" id="ee_${ev.id}" value="${ev.endDate}" />
+          </div>
+        </td>
+        <td>
+          <div id="view_content_${ev.id}">${escHtml(ev.content)}</div>
+          <input class="grid-input" type="text" id="ec_${ev.id}"
+                 value="${escHtml(ev.content)}"
+                 style="display:none;" />
+        </td>
+        <td class="td-actions">
+          <div id="view_actions_${ev.id}">
+            <button class="ws-btn ws-btn-sm" onclick="fn_startEdit(${ev.id})">수정</button>
+            <button class="ws-btn ws-btn-danger ws-btn-sm" onclick="fn_delete(${ev.id})">삭제</button>
+          </div>
+          <div id="edit_actions_${ev.id}" style="display:none;">
+            <button class="ws-btn ws-btn-confirm ws-btn-sm" onclick="fn_saveEdit(${ev.id})">저장</button>
+            <button class="ws-btn ws-btn-sm" onclick="fn_cancelEdit(${ev.id})">취소</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join("");
+  }
+
+  function escHtml(str) {
+    return String(str ?? "")
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  /* ── 신규 등록 ── */
+  function fn_add() {
+    const content   = document.getElementById("inp_addContent").value.trim();
+    const startDate = document.getElementById("inp_addStart").value;
+    const endDate   = document.getElementById("inp_addEnd").value;
+
+    if (!content)   { showToast("일정 내용을 입력하세요."); return; }
+    if (!startDate) { showToast("시작일을 입력하세요."); return; }
+    if (!endDate)   { showToast("종료일을 입력하세요."); return; }
+    if (startDate > endDate) { showToast("종료일은 시작일 이후여야 합니다."); return; }
+
+    fetch(BASE_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content, startDate, endDate })
+    })
+    .then(() => {
+      document.getElementById("inp_addContent").value = "";
+      const today = getToday();
+      document.getElementById("inp_addStart").value = today;
+      document.getElementById("inp_addEnd").value   = today;
+      showToast("등록되었습니다.");
+      fn_search();
+    })
+    .catch(() => showToast("등록 중 오류가 발생했습니다."));
+  }
+
+  /* ── 인라인 수정 시작 ── */
+  function fn_startEdit(id) {
+    // 다른 편집 중인 행 취소
+    document.querySelectorAll("[id^='edit_actions_']").forEach(el => {
+      if (el.style.display !== "none") {
+        const otherId = el.id.replace("edit_actions_", "");
+        fn_cancelEdit(parseInt(otherId));
+      }
+    });
+
+    document.getElementById(`view_date_${id}`).style.display    = "none";
+    document.getElementById(`edit_date_${id}`).style.display    = "flex";
+    document.getElementById(`view_content_${id}`).style.display = "none";
+    document.getElementById(`ec_${id}`).style.display           = "block";
+    document.getElementById(`view_actions_${id}`).style.display = "none";
+    document.getElementById(`edit_actions_${id}`).style.display = "block";
+    document.getElementById(`ec_${id}`).focus();
+    document.getElementById(`row_${id}`).style.background = "#fffbeb";
+  }
+
+  /* ── 인라인 수정 취소 ── */
+  function fn_cancelEdit(id) {
+    const ev = eventData.find(e => e.id === id);
+    if (!ev) return;
+
+    document.getElementById(`es_${id}`).value                   = ev.startDate;
+    document.getElementById(`ee_${id}`).value                   = ev.endDate;
+    document.getElementById(`ec_${id}`).value                   = ev.content;
+    document.getElementById(`view_date_${id}`).style.display    = "";
+    document.getElementById(`edit_date_${id}`).style.display    = "none";
+    document.getElementById(`view_content_${id}`).style.display = "";
+    document.getElementById(`ec_${id}`).style.display           = "none";
+    document.getElementById(`view_actions_${id}`).style.display = "";
+    document.getElementById(`edit_actions_${id}`).style.display = "none";
+    document.getElementById(`row_${id}`).style.background       = "";
+  }
+
+  /* ── 인라인 수정 저장 ── */
+  function fn_saveEdit(id) {
+    const content   = document.getElementById(`ec_${id}`).value.trim();
+    const startDate = document.getElementById(`es_${id}`).value;
+    const endDate   = document.getElementById(`ee_${id}`).value;
+
+    if (!content) { showToast("내용을 입력하세요."); return; }
+    if (startDate > endDate) { showToast("종료일은 시작일 이후여야 합니다."); return; }
+
+    fetch(`${BASE_URL}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content, startDate, endDate })
+    })
+    .then(() => { showToast("수정되었습니다."); fn_search(); })
+    .catch(() => showToast("수정 중 오류가 발생했습니다."));
+  }
+
+  /* ── 단건 삭제 ── */
+  function fn_delete(id) {
+    if (!confirm("일정을 삭제하시겠습니까?")) return;
+    fetch(`${BASE_URL}/${id}`, { method: "DELETE" })
+      .then(() => { showToast("삭제되었습니다."); fn_search(); })
+      .catch(() => showToast("삭제 중 오류가 발생했습니다."));
+  }
+
+  /* ── 전체 체크박스 ── */
+  function fn_checkAll(checked) {
+    document.querySelectorAll(".row-chk").forEach(chk => {
+      chk.checked = checked;
+      const row = document.getElementById(`row_${chk.dataset.id}`);
+      if (row) row.classList.toggle("row-checked", checked);
+    });
+    updateBulkBar();
+  }
+
+  /* ── 체크 상태 반영 ── */
+  document.addEventListener("change", function(e) {
+    if (e.target.classList.contains("row-chk")) {
+      const row = document.getElementById(`row_${e.target.dataset.id}`);
+      if (row) row.classList.toggle("row-checked", e.target.checked);
+      const all  = document.querySelectorAll(".row-chk");
+      const chkd = document.querySelectorAll(".row-chk:checked");
+      document.getElementById("chk_all").checked = all.length > 0 && all.length === chkd.length;
+    }
+  });
+
+  /* ── 일괄 삭제 바 갱신 ── */
+  function updateBulkBar() {
+    const checked = document.querySelectorAll(".row-chk:checked");
+    const bar     = document.getElementById("bulk_bar");
+    const ph      = document.getElementById("bulk_placeholder");
+    if (checked.length > 0) {
+      bar.style.display = "flex";
+      ph.style.display  = "none";
+      document.getElementById("bulk_text").textContent = `${checked.length}건 선택됨`;
+    } else {
+      bar.style.display = "none";
+      ph.style.display  = "block";
+    }
+  }
+
+  /* ── 일괄 삭제 ── */
+  function fn_bulkDelete() {
+    const ids = [...document.querySelectorAll(".row-chk:checked")]
+      .map(chk => parseInt(chk.dataset.id));
+    if (ids.length === 0) { showToast("삭제할 항목을 선택하세요."); return; }
+    if (!confirm(`${ids.length}건을 삭제하시겠습니까?`)) return;
+
+    fetch(`${BASE_URL}/bulk`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(ids)
+    })
+    .then(() => { showToast(`${ids.length}건 삭제되었습니다.`); fn_search(); })
+    .catch(() => showToast("삭제 중 오류가 발생했습니다."));
+  }
+</script>
+</body>
+</html>
