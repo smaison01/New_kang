@@ -1,0 +1,113 @@
+.em-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.em-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.em-filter label {
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.em-filter input[type="date"] {
+  padding: 7px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.em-filter input[type="date"]:focus {
+  outline: none;
+  border-color: #4f6ef7;
+}
+
+.btn-clear {
+  padding: 6px 12px;
+  background: #eee;
+  color: #555;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.btn-clear:hover { background: #ddd; }
+
+.em-count {
+  font-size: 0.88rem;
+  color: #888;
+}
+
+.em-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.em-table th {
+  background: #4f6ef7;
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.em-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid #f2f2f2;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.em-table tr:last-child td { border-bottom: none; }
+.em-table tr:hover td { background: #f7f9ff; }
+.em-table tr.editing td { background: #fffaf4; }
+
+.td-date { color: #4f6ef7; font-weight: 600; white-space: nowrap; }
+.td-title { font-weight: 500; }
+.td-desc { color: #888; font-size: 0.85rem; }
+
+.inline-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #4f6ef7;
+  border-radius: 6px;
+  font-size: 0.88rem;
+}
+
+.inline-input:focus { outline: none; }
+
+.em-table td button {
+  padding: 5px 12px;
+  font-size: 0.82rem;
+  margin-right: 4px;
+}
+
+button {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  background: #4f6ef7;
+  color: white;
+  transition: background 0.2s;
+}
+
+button:hover { background: #3a58e0; }
+button.danger { background: #e74c3c; }
+button.danger:hover { background: #c0392b; }
+button.btn-cancel { background: #aaa; }
+button.btn-cancel:hover { background: #888; }

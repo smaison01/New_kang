@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Board from './pages/Board';
 import Calendar from './pages/Calendar';
+import EventManage from './pages/EventManage';
 import './App.css';
 
 export default function App() {
@@ -14,6 +15,7 @@ export default function App() {
             <Route path="/" element={<Navigate to="/board" replace />} />
             <Route path="/board" element={<Board />} />
             <Route path="/calendar" element={<Calendar />} />
+            <Route path="/events" element={<EventManage />} />
           </Routes>
         </main>
       </div>

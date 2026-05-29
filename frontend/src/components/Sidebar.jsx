@@ -4,6 +4,7 @@ import './Sidebar.css';
 const menus = [
   { path: '/board', label: '게시판' },
   { path: '/calendar', label: '캘린더' },
+  { path: '/events', label: '일정 관리' },
 ];
 
 export default function Sidebar() {
