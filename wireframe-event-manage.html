@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>일정 관리 - 와이어프레임</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f6fa;
+      color: #333;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── 사이드바 ── */
+    .sidebar {
+      width: 200px;
+      min-height: 100vh;
+      background: #1a1a2e;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+    }
+    .sidebar-logo {
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 700;
+      padding: 28px 24px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar-item {
+      display: block;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      padding: 14px 24px;
+      font-size: 0.92rem;
+      border-left: 3px solid transparent;
+      cursor: pointer;
+    }
+    .sidebar-item:hover { background: rgba(255,255,255,0.07); color: white; }
+    .sidebar-item.active {
+      background: rgba(79,110,247,0.2);
+      color: #7b9fff;
+      border-left-color: #4f6ef7;
+    }
+
+    /* ── 메인 콘텐츠 ── */
+    .main { margin-left: 200px; flex: 1; padding: 40px 36px; }
+
+    .page-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 28px;
+    }
+
+    /* ── 툴바 ── */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      background: white;
+      padding: 14px 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .filter-group label {
+      font-size: 0.88rem;
+      color: #555;
+      font-weight: 500;
+    }
+    .filter-group input[type="date"] {
+      padding: 7px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #333;
+    }
+    .btn-clear {
+      padding: 6px 12px;
+      background: #eee;
+      color: #555;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+    .total-count {
+      font-size: 0.88rem;
+      color: #888;
+      background: #f0f3ff;
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    /* ── 테이블 ── */
+    .em-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .em-table th {
+      background: #4f6ef7;
+      color: white;
+      padding: 13px 16px;
+      text-align: left;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .em-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f2f2f2;
+      font-size: 0.9rem;
+      vertical-align: middle;
+    }
+    .em-table tr:last-child td { border-bottom: none; }
+    .em-table tr:hover td { background: #f7f9ff; }
+    .em-table tr.editing td { background: #fffaf4; }
+
+    .td-num { width: 60px; color: #aaa; }
+    .td-date { width: 130px; color: #4f6ef7; font-weight: 600; white-space: nowrap; }
+    .td-title { font-weight: 500; }
+    .td-desc { color: #999; font-size: 0.85rem; }
+    .td-actions { width: 140px; }
+
+    /* ── 버튼 ── */
+    .btn {
+      padding: 5px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: white;
+      background: #4f6ef7;
+      margin-right: 4px;
+    }
+    .btn:hover { background: #3a58e0; }
+    .btn-danger { background: #e74c3c; }
+    .btn-danger:hover { background: #c0392b; }
+    .btn-save { background: #27ae60; }
+    .btn-save:hover { background: #219150; }
+    .btn-cancel { background: #aaa; }
+    .btn-cancel:hover { background: #888; }
+
+    /* ── 인라인 편집 입력 ── */
+    .inline-input {
+      width: 100%;
+      padding: 6px 10px;
+      border: 1.5px solid #4f6ef7;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      background: #f7f9ff;
+    }
+
+    /* ── 와이어프레임 주석 박스 ── */
+    .wf-note {
+      position: relative;
+      margin-top: 40px;
+      padding: 20px 24px;
+      background: #fff8e1;
+      border: 1.5px dashed #f0b429;
+      border-radius: 10px;
+    }
+    .wf-note h3 { font-size: 0.95rem; color: #b7860b; margin-bottom: 12px; }
+    .wf-note ul { padding-left: 18px; }
+    .wf-note li { font-size: 0.88rem; color: #7a6000; margin-bottom: 6px; line-height: 1.6; }
+
+    /* ── 상태 라벨 ── */
+    .state-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    .badge-edit { background: #fff3cd; color: #856404; }
+    .badge-normal { background: #e8f5e9; color: #256029; }
+  </style>
+</head>
+<body>
+
+  <!-- 사이드바 -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">My App</div>
+    <a class="sidebar-item">게시판</a>
+    <a class="sidebar-item">캘린더</a>
+    <a class="sidebar-item active">일정 관리</a>
+  </aside>
+
+  <!-- 메인 -->
+  <div class="main">
+    <h1 class="page-title">일정 관리</h1>
+
+    <!-- 툴바 영역 -->
+    <div class="toolbar">
+      <div class="filter-group">
+        <label>날짜 필터</label>
+        <input type="date" value="2026-05-29" />
+        <button class="btn-clear">초기화</button>
+      </div>
+      <span class="total-count">전체 5건</span>
+    </div>
+
+    <!-- 테이블 -->
+    <table class="em-table">
+      <thead>
+        <tr>
+          <th class="td-num">번호</th>
+          <th class="td-date">날짜</th>
+          <th>제목</th>
+          <th>메모</th>
+          <th class="td-actions">관리</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- 일반 행 -->
+        <tr>
+          <td class="td-num">1</td>
+          <td class="td-date">2026-05-26</td>
+          <td class="td-title">팀 회의 <span class="state-badge badge-normal">일반</span></td>
+          <td class="td-desc">주간 스프린트 점검</td>
+          <td class="td-actions">
+            <button class="btn">수정</button>
+            <button class="btn btn-danger">삭제</button>
+          </td>
+        </tr>
+
+        <!-- 인라인 편집 중인 행 -->
+        <tr class="editing">
+          <td class="td-num">2</td>
+          <td class="td-date">2026-05-27</td>
+          <td>
+            <input class="inline-input" value="고객사 미팅" />
+            <span class="state-badge badge-edit">편집 중</span>
+          </td>
+          <td>
+            <input class="inline-input" value="오후 2시 / 강남역" />
+          </td>
+          <td class="td-actions">
+            <button class="btn btn-save">저장</button>
+            <button class="btn btn-cancel">취소</button>
+          </td>
+        </tr>
+
+        <!-- 일반 행 -->
+        <tr>
+          <td class="td-num">3</td>
+          <td class="td-date">2026-05-28</td>
+          <td class="td-title">코드 리뷰</td>
+          <td class="td-desc">-</td>
+          <td class="td-actions">
+            <button class="btn">수정</button>
+            <button class="btn btn-danger">삭제</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="td-num">4</td>
+          <td class="td-date">2026-05-29</td>
+          <td class="td-title">배포 작업</td>
+          <td class="td-desc">운영 서버 v1.2 배포</td>
+          <td class="td-actions">
+            <button class="btn">수정</button>
+            <button class="btn btn-danger">삭제</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="td-num">5</td>
+          <td class="td-date">2026-05-30</td>
+          <td class="td-title">휴가</td>
+          <td class="td-desc">-</td>
+          <td class="td-actions">
+            <button class="btn">수정</button>
+            <button class="btn btn-danger">삭제</button>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <!-- 와이어프레임 설명 -->
+    <div class="wf-note">
+      <h3>와이어프레임 설명</h3>
+      <ul>
+        <li><strong>툴바</strong> : 날짜 필터(date picker) + 초기화 버튼 / 우측 전체 건수 표시</li>
+        <li><strong>테이블 컬럼</strong> : 번호 · 날짜(날짜순 정렬) · 제목 · 메모 · 관리(수정/삭제)</li>
+        <li><strong>일반 상태</strong> : [수정] 클릭 → 해당 행이 인라인 편집 모드로 전환</li>
+        <li><strong>편집 상태</strong> : 제목·메모 인풋 활성화 + [저장] / [취소] 버튼 표시, 행 배경색 변경(주황빛)</li>
+        <li><strong>삭제</strong> : confirm 다이얼로그 후 행 제거 → 목록 자동 갱신</li>
+        <li><strong>날짜 필터</strong> : 선택한 날짜의 일정만 표시, 초기화 시 전체 목록 복원</li>
+      </ul>
+    </div>
+
+  </div>
+
+</body>
+</html>
