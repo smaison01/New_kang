@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE wsq>
+<w2:window xmlns:w2="http://www.inswave.com/websquare"
+           id="eventManage"
+           title="일정 관리">
+
+  <!-- ============================================================
+       DataCollection
+  ============================================================ -->
+  <w2:head>
+    <w2:dataCollection>
+
+      <!-- 일정 목록 DataList -->
+      <w2:dataList id="dsList_event">
+        <w2:keyfield>id</w2:keyfield>
+        <w2:columnInfo>
+          <w2:column id="chk"       type="STRING" />
+          <w2:column id="id"        type="STRING" />
+          <w2:column id="content"   type="STRING" />
+          <w2:column id="startDate" type="STRING" />
+          <w2:column id="endDate"   type="STRING" />
+        </w2:columnInfo>
+      </w2:dataList>
+
+      <!-- 신규 등록 DataMap -->
+      <w2:dataMap id="dsMap_add">
+        <w2:columnInfo>
+          <w2:column id="content"   type="STRING" />
+          <w2:column id="startDate" type="STRING" />
+          <w2:column id="endDate"   type="STRING" />
+        </w2:columnInfo>
+      </w2:dataMap>
+
+      <!-- 검색 조건 DataMap -->
+      <w2:dataMap id="dsMap_search">
+        <w2:columnInfo>
+          <w2:column id="searchStartDate" type="STRING" />
+          <w2:column id="searchEndDate"   type="STRING" />
+        </w2:columnInfo>
+      </w2:dataMap>
+
+    </w2:dataCollection>
+
+    <!-- ============================================================
+         JavaScript
+    ============================================================ -->
+    <w2:script type="text/javascript"><![CDATA[
+
+      var BASE_URL = "http://localhost:8080/api/events";
+
+      /* ── 페이지 초기화 ── */
+      function scwin_onload() {
+        // 오늘 날짜를 신규 등록 기본값으로 설정
+        var today = scwin.getToday("yyyy-MM-dd");
+        dsMap_add.set("startDate", today);
+        dsMap_add.set("endDate",   today);
+
+        fn_search();
+      }
+
+      /* ── 전체 조회 ── */
+      function fn_search() {
+        var startDate = dsMap_search.get("searchStartDate");
+        var endDate   = dsMap_search.get("searchEndDate");
+
+        var url = BASE_URL;
+        if (startDate && endDate) {
+          url += "?startDate=" + startDate + "&endDate=" + endDate;
+        }
+
+        scwin.ajax({
+          url     : url,
+          method  : "GET",
+          success : function(data) {
+            dsList_event.loadData(data);
+          },
+          error : function(err) {
+            w2.alert("조회 중 오류가 발생했습니다.");
+          }
+        });
+      }
+
+      /* ── 조회 조건 초기화 ── */
+      function fn_reset() {
+        dsMap_search.set("searchStartDate", "");
+        dsMap_search.set("searchEndDate",   "");
+        fn_search();
+      }
+
+      /* ── 신규 등록 ── */
+      function fn_add() {
+        var content   = dsMap_add.get("content");
+        var startDate = dsMap_add.get("startDate");
+        var endDate   = dsMap_add.get("endDate");
+
+        if (!content || content.trim() === "") {
+          w2.alert("일정 내용을 입력하세요.");
+          inp_addContent.setFocus();
+          return;
+        }
+        if (!startDate) {
+          w2.alert("시작일을 입력하세요.");
+          return;
+        }
+        if (!endDate) {
+          w2.alert("종료일을 입력하세요.");
+          return;
+        }
+        if (startDate > endDate) {
+          w2.alert("종료일은 시작일보다 이후여야 합니다.");
+          return;
+        }
+
+        scwin.ajax({
+          url         : BASE_URL,
+          method      : "POST",
+          contentType : "application/json",
+          data        : JSON.stringify({
+            content   : content,
+            startDate : startDate,
+            endDate   : endDate
+          }),
+          success : function() {
+            // 폼 초기화
+            var today = scwin.getToday("yyyy-MM-dd");
+            dsMap_add.set("content",   "");
+            dsMap_add.set("startDate", today);
+            dsMap_add.set("endDate",   today);
+            fn_search();
+          },
+          error : function() {
+            w2.alert("등록 중 오류가 발생했습니다.");
+          }
+        });
+      }
+
+      /* ── 그리드 행 수정 저장 ── */
+      function fn_update(rowIndex) {
+        var row = dsList_event.getRowData(rowIndex);
+
+        if (!row.content || row.content.trim() === "") {
+          w2.alert("내용을 입력하세요.");
+          return;
+        }
+
+        scwin.ajax({
+          url         : BASE_URL + "/" + row.id,
+          method      : "PUT",
+          contentType : "application/json",
+          data        : JSON.stringify({
+            content   : row.content,
+            startDate : row.startDate,
+            endDate   : row.endDate
+          }),
+          success : function() {
+            fn_search();
+          },
+          error : function() {
+            w2.alert("수정 중 오류가 발생했습니다.");
+          }
+        });
+      }
+
+      /* ── 단건 삭제 ── */
+      function fn_delete(rowIndex) {
+        var row = dsList_event.getRowData(rowIndex);
+        w2.confirm("일정을 삭제하시겠습니까?", function(result) {
+          if (!result) return;
+          scwin.ajax({
+            url     : BASE_URL + "/" + row.id,
+            method  : "DELETE",
+            success : function() { fn_search(); },
+            error   : function() { w2.alert("삭제 중 오류가 발생했습니다."); }
+          });
+        });
+      }
+
+      /* ── 전체 체크박스 ── */
+      function fn_checkAll(checked) {
+        var rowCount = dsList_event.getCount();
+        for (var i = 0; i < rowCount; i++) {
+          dsList_event.set(i, "chk", checked ? "Y" : "N");
+        }
+      }
+
+      /* ── 일괄 삭제 ── */
+      function fn_bulkDelete() {
+        var ids = [];
+        var rowCount = dsList_event.getCount();
+        for (var i = 0; i < rowCount; i++) {
+          if (dsList_event.get(i, "chk") === "Y") {
+            ids.push(parseInt(dsList_event.get(i, "id")));
+          }
+        }
+
+        if (ids.length === 0) {
+          w2.alert("삭제할 항목을 선택하세요.");
+          return;
+        }
+
+        w2.confirm(ids.length + "건을 삭제하시겠습니까?", function(result) {
+          if (!result) return;
+          scwin.ajax({
+            url         : BASE_URL + "/bulk",
+            method      : "DELETE",
+            contentType : "application/json",
+            data        : JSON.stringify(ids),
+            success     : function() { fn_search(); },
+            error       : function() { w2.alert("삭제 중 오류가 발생했습니다."); }
+          });
+        });
+      }
+
+    ]]></w2:script>
+  </w2:head>
+
+  <!-- ============================================================
+       UI Layout
+  ============================================================ -->
+  <w2:body>
+    <w2:vbox id="vbox_main" style="width:100%;padding:24px;">
+
+      <!-- 페이지 타이틀 -->
+      <w2:label id="lbl_title"
+                value="🗂️ 일정 관리"
+                style="font-size:22px;font-weight:700;color:#37352f;padding-bottom:8px;" />
+      <w2:label id="lbl_desc"
+                value="전체 일정을 조회하고 관리합니다."
+                style="font-size:13px;color:#9b9a97;padding-bottom:16px;" />
+
+      <!-- ① 신규 일정 등록 -->
+      <w2:groupbox id="grp_add" title="신규 일정 등록"
+                   style="width:100%;margin-bottom:16px;border:1px solid #e9e9e7;border-radius:8px;">
+        <w2:hbox id="hbox_add" style="align-items:center;gap:8px;padding:14px 18px;flex-wrap:wrap;">
+
+          <w2:label id="lbl_addPeriod" value="기간"
+                    style="font-size:12px;color:#9b9a97;font-weight:500;" />
+          <w2:dateInput id="inp_addStart"
+                        bindDataSet="dsMap_add" bindColumnId="startDate"
+                        format="yyyy-MM-dd"
+                        style="width:130px;" />
+          <w2:label id="lbl_addSep" value="→"
+                    style="color:#c7c4bf;" />
+          <w2:dateInput id="inp_addEnd"
+                        bindDataSet="dsMap_add" bindColumnId="endDate"
+                        format="yyyy-MM-dd"
+                        style="width:130px;" />
+
+          <w2:label id="lbl_addContent" value="내용"
+                    style="font-size:12px;color:#9b9a97;font-weight:500;margin-left:12px;" />
+          <w2:input id="inp_addContent"
+                    bindDataSet="dsMap_add" bindColumnId="content"
+                    placeholder="일정 내용을 입력하세요"
+                    style="width:280px;" />
+
+          <w2:button id="btn_add"
+                     value="+ 등록"
+                     ev:onclick="fn_add();"
+                     style="background:#37352f;color:#fff;border:none;border-radius:4px;padding:6px 16px;" />
+        </w2:hbox>
+      </w2:groupbox>
+
+      <!-- ② 조회 조건 -->
+      <w2:groupbox id="grp_search" title="조회 조건"
+                   style="width:100%;margin-bottom:12px;border:1px solid #e9e9e7;border-radius:8px;">
+        <w2:hbox id="hbox_search"
+                 style="align-items:center;justify-content:space-between;padding:14px 18px;flex-wrap:wrap;gap:10px;">
+          <w2:hbox id="hbox_filter" style="align-items:center;gap:8px;flex-wrap:wrap;">
+            <w2:dateInput id="inp_searchStart"
+                          bindDataSet="dsMap_search" bindColumnId="searchStartDate"
+                          format="yyyy-MM-dd"
+                          style="width:130px;" />
+            <w2:label id="lbl_searchSep" value="→" style="color:#c7c4bf;" />
+            <w2:dateInput id="inp_searchEnd"
+                          bindDataSet="dsMap_search" bindColumnId="searchEndDate"
+                          format="yyyy-MM-dd"
+                          style="width:130px;" />
+            <w2:button id="btn_search"
+                       value="조회"
+                       ev:onclick="fn_search();"
+                       style="background:#2eaadc;color:#fff;border:none;border-radius:4px;padding:5px 14px;" />
+            <w2:button id="btn_reset"
+                       value="초기화"
+                       ev:onclick="fn_reset();"
+                       style="border:1px solid #e9e9e7;border-radius:4px;padding:5px 14px;" />
+          </w2:hbox>
+          <w2:label id="lbl_totalCount"
+                    bindDataSet="dsList_event"
+                    bindType="count"
+                    format="전체 {0}건"
+                    style="font-size:12px;color:#9b9a97;background:#f1f1ef;padding:3px 12px;border-radius:20px;" />
+        </w2:hbox>
+      </w2:groupbox>
+
+      <!-- ③ 일괄 삭제 바 -->
+      <w2:hbox id="hbox_bulk" style="align-items:center;gap:8px;min-height:34px;margin-bottom:8px;">
+        <w2:button id="btn_bulkDelete"
+                   value="선택 삭제"
+                   ev:onclick="fn_bulkDelete();"
+                   style="color:#e03e3e;border:1px solid #ffa8a8;background:#fff5f5;border-radius:4px;padding:4px 12px;font-size:12px;" />
+      </w2:hbox>
+
+      <!-- ④ 그리드 -->
+      <w2:grid id="grid_event"
+               bindDataSet="dsList_event"
+               style="width:100%;border:1px solid #e9e9e7;border-radius:8px;"
+               headerStyle="background:#f7f6f3;color:#9b9a97;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">
+
+        <w2:gridView id="gridView_event">
+          <w2:head>
+            <w2:row>
+              <!-- 전체 선택 체크박스 -->
+              <w2:cell id="hcell_chk" width="40"
+                       style="text-align:center;">
+                <w2:checkBox id="chk_all"
+                             ev:onchange="fn_checkAll(this.getValue() === 'true');" />
+              </w2:cell>
+              <w2:cell id="hcell_no"      value="#"       width="50"  />
+              <w2:cell id="hcell_date"    value="날짜 ↓"  width="220" />
+              <w2:cell id="hcell_content" value="내용"               />
+              <w2:cell id="hcell_action"  value="관리"    width="120" />
+            </w2:row>
+          </w2:head>
+
+          <w2:body>
+            <w2:row>
+              <!-- 행 체크박스 -->
+              <w2:cell id="cell_chk" width="40" style="text-align:center;">
+                <w2:checkBox id="chk_row"
+                             bindColumnId="chk"
+                             trueValue="Y" falseValue="N" />
+              </w2:cell>
+
+              <!-- 번호 (역순) -->
+              <w2:cell id="cell_no" width="50"
+                       expression="dsList_event.getCount() - rowIndex"
+                       style="color:#c7c4bf;font-size:12px;" />
+
+              <!-- 날짜 (startDate ~ endDate) -->
+              <w2:cell id="cell_date" width="220">
+                <w2:hbox style="align-items:center;gap:6px;">
+                  <w2:label value="📅" style="font-size:12px;" />
+                  <w2:dateInput id="dinp_startDate"
+                                bindColumnId="startDate"
+                                format="yyyy-MM-dd"
+                                style="width:115px;font-size:12px;" />
+                  <w2:label value="→" style="color:#c7c4bf;font-size:11px;" />
+                  <w2:dateInput id="dinp_endDate"
+                                bindColumnId="endDate"
+                                format="yyyy-MM-dd"
+                                style="width:115px;font-size:12px;" />
+                </w2:hbox>
+              </w2:cell>
+
+              <!-- 내용 -->
+              <w2:cell id="cell_content">
+                <w2:input id="inp_content"
+                          bindColumnId="content"
+                          style="width:100%;font-size:13px;" />
+              </w2:cell>
+
+              <!-- 관리 버튼 -->
+              <w2:cell id="cell_action" width="120">
+                <w2:hbox style="gap:4px;">
+                  <w2:button id="btn_save"
+                             value="저장"
+                             ev:onclick="fn_update(rowIndex);"
+                             style="background:#2eaadc;color:#fff;border:none;border-radius:4px;padding:3px 10px;font-size:12px;" />
+                  <w2:button id="btn_del"
+                             value="삭제"
+                             ev:onclick="fn_delete(rowIndex);"
+                             style="color:#e03e3e;border:1px solid #ffa8a8;background:#fff5f5;border-radius:4px;padding:3px 10px;font-size:12px;" />
+                </w2:hbox>
+              </w2:cell>
+            </w2:row>
+          </w2:body>
+
+        </w2:gridView>
+      </w2:grid>
+
+    </w2:vbox>
+  </w2:body>
+
+</w2:window>
