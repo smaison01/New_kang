@@ -17,12 +17,13 @@ public class Event {
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private String content;
 
     @Column(nullable = false)
-    private String date;
+    private String startDate;
 
-    private String description;
+    @Column(nullable = false)
+    private String endDate;
 
     private LocalDateTime createdAt;
 

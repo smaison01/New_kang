@@ -17,7 +17,12 @@ public class EventController {
     private final EventService eventService;
 
     @GetMapping
-    public List<Event> getAll() {
+    public List<Event> getAll(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        if (startDate != null && endDate != null) {
+            return eventService.findByDateRange(startDate, endDate);
+        }
         return eventService.findAll();
     }
 
@@ -39,6 +44,12 @@ public class EventController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         eventService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/bulk")
+    public ResponseEntity<Void> bulkDelete(@RequestBody List<Long> ids) {
+        eventService.deleteAll(ids);
         return ResponseEntity.noContent().build();
     }
 }

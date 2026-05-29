@@ -1,113 +1,201 @@
+.em-page {
+  padding: 48px 60px;
+  max-width: 1100px;
+  background: #ffffff;
+  min-height: 100vh;
+}
+
+/* ── 헤더 ── */
+.em-emoji { font-size: 2.6rem; margin-bottom: 6px; }
+.em-title { font-size: 1.9rem; font-weight: 700; color: #37352f; line-height: 1.2; }
+.em-desc  { margin-top: 6px; font-size: 0.875rem; color: #9b9a97; }
+.em-header { margin-bottom: 28px; }
+
+.em-divider { border: none; border-top: 1px solid #e9e9e7; margin: 20px 0; }
+
+.em-section-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #9b9a97;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* ── 신규 등록 폼 ── */
+.em-add-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: #f7f6f3;
+  border: 1px solid #e9e9e7;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+}
+.em-form-label { font-size: 0.8rem; color: #9b9a97; font-weight: 500; white-space: nowrap; }
+
+/* ── 인풋 ── */
+.em-input {
+  padding: 6px 10px;
+  border: 1px solid #e9e9e7;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #37352f;
+  background: #ffffff;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.em-input:focus { outline: none; border-color: #a8a29e; box-shadow: 0 0 0 2px rgba(37,99,235,0.08); }
+.em-input-flex  { flex: 1; min-width: 200px; }
+.em-input-sm    { padding: 4px 8px; font-size: 0.82rem; }
+
+.em-date-sep { color: #c7c4bf; font-size: 0.88rem; }
+
+/* ── 툴바 ── */
 .em-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
-}
-
-.em-filter {
-  display: flex;
-  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
   gap: 10px;
 }
+.em-filter-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
-.em-filter label {
-  font-size: 0.9rem;
-  color: #555;
-  font-weight: 500;
+.em-total-chip {
+  font-size: 0.78rem;
+  color: #9b9a97;
+  background: #f1f1ef;
+  padding: 3px 12px;
+  border-radius: 20px;
+  border: 1px solid #e9e9e7;
 }
 
-.em-filter input[type="date"] {
-  padding: 7px 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 0.9rem;
+/* ── 일괄 삭제 바 ── */
+.em-bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  margin-bottom: 6px;
 }
-
-.em-filter input[type="date"]:focus {
-  outline: none;
-  border-color: #4f6ef7;
+.em-checked-dot {
+  width: 8px; height: 8px;
+  background: #e03e3e;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
+.em-bulk-count { font-size: 0.82rem; color: #e03e3e; font-weight: 500; }
 
-.btn-clear {
-  padding: 6px 12px;
-  background: #eee;
-  color: #555;
-  border: none;
-  border-radius: 6px;
+/* ── 버튼 ── */
+.em-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border: 1px solid #e9e9e7;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
+  color: #37352f;
+  background: #ffffff;
+  font-family: inherit;
+  transition: background 0.1s;
+  white-space: nowrap;
 }
+.em-btn:hover      { background: #f1f1ef; }
+.em-btn-sm         { padding: 4px 11px; font-size: 0.79rem; }
+.em-btn-primary    { background: #37352f; color: #fff; border-color: #37352f; }
+.em-btn-primary:hover { background: #1a1a18; }
+.em-btn-confirm    { background: #2eaadc; color: #fff; border-color: #2eaadc; }
+.em-btn-confirm:hover { background: #1c9bc9; }
+.em-btn-danger     { color: #e03e3e; border-color: #ffa8a8; background: #fff5f5; }
+.em-btn-danger:hover  { background: #ffe3e3; }
 
-.btn-clear:hover { background: #ddd; }
-
-.em-count {
-  font-size: 0.88rem;
-  color: #888;
-}
-
+/* ── 테이블 ── */
 .em-table {
   width: 100%;
   border-collapse: collapse;
-  background: white;
-  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #e9e9e7;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
-
 .em-table th {
-  background: #4f6ef7;
-  color: white;
-  padding: 12px 16px;
+  background: #f7f6f3;
+  color: #9b9a97;
+  padding: 10px 14px;
   text-align: left;
-  font-size: 0.88rem;
+  font-size: 0.72rem;
   font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e9e9e7;
 }
-
 .em-table td {
-  padding: 11px 16px;
-  border-bottom: 1px solid #f2f2f2;
-  font-size: 0.9rem;
+  padding: 11px 14px;
+  border-bottom: 1px solid #f1f1ef;
+  font-size: 0.875rem;
   vertical-align: middle;
+  color: #37352f;
+}
+.em-table tbody tr:last-child td { border-bottom: none; }
+.em-table tbody tr:hover td      { background: #f7f6f3; }
+.em-table tr.row-editing td      { background: #fffbeb; }
+.em-table tr.row-checked td      { background: #fef9f9; }
+
+.td-chk     { width: 40px; text-align: center; }
+.td-num     { width: 50px; color: #c7c4bf; font-size: 0.8rem; }
+.td-date    { width: 230px; }
+.td-actions { width: 120px; white-space: nowrap; }
+
+input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: #37352f; }
+
+.em-date-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f1f1ef;
+  border: 1px solid #e9e9e7;
+  border-radius: 4px;
+  padding: 3px 9px;
+  font-size: 0.8rem;
+  color: #37352f;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-.em-table tr:last-child td { border-bottom: none; }
-.em-table tr:hover td { background: #f7f9ff; }
-.em-table tr.editing td { background: #fffaf4; }
+.date-range-edit { display: flex; align-items: center; gap: 6px; }
 
-.td-date { color: #4f6ef7; font-weight: 600; white-space: nowrap; }
-.td-title { font-weight: 500; }
-.td-desc { color: #888; font-size: 0.85rem; }
+.em-inline-input {
+  flex: 1;
+  padding: 5px 9px;
+  border: 1px solid #a8a29e;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  background: #ffffff;
+  font-family: inherit;
+  color: #37352f;
+}
+.em-inline-input:focus { outline: none; border-color: #2eaadc; box-shadow: 0 0 0 2px rgba(46,170,220,0.15); }
 
-.inline-input {
-  width: 100%;
-  padding: 6px 10px;
-  border: 1px solid #4f6ef7;
-  border-radius: 6px;
-  font-size: 0.88rem;
+.em-editing-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 3px;
+  font-size: 0.72rem;
+  color: #92400e;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-.inline-input:focus { outline: none; }
-
-.em-table td button {
-  padding: 5px 12px;
-  font-size: 0.82rem;
-  margin-right: 4px;
+.em-empty {
+  text-align: center;
+  color: #c7c4bf;
+  padding: 32px 0;
+  font-size: 0.875rem;
 }
-
-button {
-  padding: 8px 18px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  background: #4f6ef7;
-  color: white;
-  transition: background 0.2s;
-}
-
-button:hover { background: #3a58e0; }
-button.danger { background: #e74c3c; }
-button.danger:hover { background: #c0392b; }
-button.btn-cancel { background: #aaa; }
-button.btn-cancel:hover { background: #888; }

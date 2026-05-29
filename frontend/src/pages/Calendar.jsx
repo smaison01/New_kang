@@ -1,45 +1,54 @@
 import { useState, useEffect } from 'react';
 import ReactCalendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { getEvents, createEvent, updateEvent, deleteEvent } from '../api';
+import { getEvents, getEventsByDate, createEvent, updateEvent, deleteEvent } from '../api';
 import './Calendar.css';
 
 function toDateStr(date) {
   return date.toLocaleDateString('sv-SE');
 }
 
-const EMPTY_FORM = { title: '', description: '' };
+const EMPTY_FORM = { content: '' };
 
 export default function Calendar() {
   const [selected, setSelected] = useState(new Date());
   const [allEvents, setAllEvents] = useState([]);
+  const [dayEvents, setDayEvents] = useState([]);
   const [form, setForm] = useState(EMPTY_FORM);
   const [editId, setEditId] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  const load = () => getEvents().then(r => setAllEvents(r.data));
-  useEffect(() => { load(); }, []);
+  const loadAll = () => getEvents().then(r => setAllEvents(r.data));
+  const loadDay = (d) => getEventsByDate(d).then(r => setDayEvents(r.data));
+
+  useEffect(() => { loadAll(); }, []);
 
   const dateStr = toDateStr(selected);
-  const dayEvents = allEvents.filter(e => e.date === dateStr);
-  const eventDates = new Set(allEvents.map(e => e.date));
+  useEffect(() => { loadDay(dateStr); }, [dateStr]);
+
+  const hasDot = (date) => {
+    const d = toDateStr(date);
+    return allEvents.some(e => e.startDate <= d && e.endDate >= d);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (editId) {
-      await updateEvent(editId, { ...form, date: dateStr });
+      const ev = dayEvents.find(e => e.id === editId);
+      await updateEvent(editId, { ...form, startDate: ev.startDate, endDate: ev.endDate });
     } else {
-      await createEvent({ ...form, date: dateStr });
+      await createEvent({ ...form, startDate: dateStr, endDate: dateStr });
     }
     setForm(EMPTY_FORM);
     setEditId(null);
     setShowForm(false);
-    load();
+    loadAll();
+    loadDay(dateStr);
   };
 
   const handleEdit = (ev) => {
     setEditId(ev.id);
-    setForm({ title: ev.title, description: ev.description || '' });
+    setForm({ content: ev.content });
     setShowForm(true);
   };
 
@@ -52,7 +61,8 @@ export default function Calendar() {
   const handleDelete = async (id) => {
     if (window.confirm('일정을 삭제하시겠습니까?')) {
       await deleteEvent(id);
-      load();
+      loadAll();
+      loadDay(dateStr);
     }
   };
 
@@ -63,10 +73,7 @@ export default function Calendar() {
 
   const tileContent = ({ date, view }) => {
     if (view !== 'month') return null;
-    if (eventDates.has(toDateStr(date))) {
-      return <div className="event-dot" />;
-    }
-    return null;
+    return hasDot(date) ? <div className="event-dot" /> : null;
   };
 
   return (
@@ -94,16 +101,11 @@ export default function Calendar() {
             <form className="event-form" onSubmit={handleSubmit}>
               <p className="form-label">{editId ? '일정 수정' : '새 일정'}</p>
               <input
-                placeholder="일정 제목"
-                value={form.title}
-                onChange={e => setForm({ ...form, title: e.target.value })}
+                placeholder="일정 내용"
+                value={form.content}
+                onChange={e => setForm({ content: e.target.value })}
                 required
                 autoFocus
-              />
-              <input
-                placeholder="메모 (선택)"
-                value={form.description}
-                onChange={e => setForm({ ...form, description: e.target.value })}
               />
               <div className="form-buttons">
                 <button type="submit">{editId ? '수정 완료' : '저장'}</button>
@@ -119,8 +121,9 @@ export default function Calendar() {
             {dayEvents.map(ev => (
               <li key={ev.id} className={`event-item${editId === ev.id ? ' editing' : ''}`}>
                 <div className="event-info">
-                  <span className="event-title">{ev.title}</span>
-                  {ev.description && <span className="event-desc">{ev.description}</span>}
+                  <span className="event-title">{ev.content}</span>
+                  {ev.startDate !== ev.endDate &&
+                    <span className="event-desc">{ev.startDate} → {ev.endDate}</span>}
                 </div>
                 <div className="event-actions">
                   <button onClick={() => handleEdit(ev)}>수정</button>

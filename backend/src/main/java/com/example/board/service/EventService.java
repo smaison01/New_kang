@@ -14,7 +14,11 @@ public class EventService {
     private final EventRepository eventRepository;
 
     public List<Event> findAll() {
-        return eventRepository.findAll();
+        return eventRepository.findAllByOrderByStartDateDesc();
+    }
+
+    public List<Event> findByDateRange(String startDate, String endDate) {
+        return eventRepository.findByDateRange(startDate, endDate);
     }
 
     public List<Event> findByDate(String date) {
@@ -28,12 +32,17 @@ public class EventService {
     public Event update(Long id, Event updated) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("일정을 찾을 수 없습니다."));
-        event.setTitle(updated.getTitle());
-        event.setDescription(updated.getDescription());
+        event.setContent(updated.getContent());
+        event.setStartDate(updated.getStartDate());
+        event.setEndDate(updated.getEndDate());
         return eventRepository.save(event);
     }
 
     public void delete(Long id) {
         eventRepository.deleteById(id);
+    }
+
+    public void deleteAll(List<Long> ids) {
+        eventRepository.deleteAllById(ids);
     }
 }
