@@ -58,26 +58,70 @@
       margin-bottom: 28px;
     }
 
-    /* ── 툴바 ── */
+    /* ── 신규 일정 등록 폼 ── */
+    .add-form {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .add-form h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-bottom: 14px;
+    }
+    .add-form-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .add-form-row label {
+      font-size: 0.85rem;
+      color: #555;
+      white-space: nowrap;
+    }
+    .add-form-row input[type="date"],
+    .add-form-row input[type="text"] {
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #333;
+    }
+    .add-form-row input[type="text"] { flex: 1; min-width: 180px; }
+    .date-range-sep {
+      color: #aaa;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    /* ── 검색 툴바 ── */
     .toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       background: white;
       padding: 14px 20px;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      flex-wrap: wrap;
+      gap: 10px;
     }
     .filter-group {
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
     .filter-group label {
       font-size: 0.88rem;
       color: #555;
       font-weight: 500;
+      white-space: nowrap;
     }
     .filter-group input[type="date"] {
       padding: 7px 10px;
@@ -86,8 +130,9 @@
       font-size: 0.88rem;
       color: #333;
     }
+    .filter-sep { color: #aaa; font-weight: 600; }
     .btn-clear {
-      padding: 6px 12px;
+      padding: 6px 14px;
       background: #eee;
       color: #555;
       border: none;
@@ -95,12 +140,32 @@
       cursor: pointer;
       font-size: 0.82rem;
     }
+    .btn-clear:hover { background: #ddd; }
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
     .total-count {
       font-size: 0.88rem;
       color: #888;
       background: #f0f3ff;
       padding: 5px 12px;
       border-radius: 20px;
+    }
+
+    /* ── 일괄삭제 버튼 영역 ── */
+    .bulk-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding: 8px 4px;
+    }
+    .bulk-count {
+      font-size: 0.85rem;
+      color: #e74c3c;
+      font-weight: 600;
     }
 
     /* ── 테이블 ── */
@@ -129,12 +194,17 @@
     .em-table tr:last-child td { border-bottom: none; }
     .em-table tr:hover td { background: #f7f9ff; }
     .em-table tr.editing td { background: #fffaf4; }
+    .em-table tr.checked td { background: #fff0f0; }
 
-    .td-num { width: 60px; color: #aaa; }
+    .td-chk  { width: 44px; text-align: center; }
+    .td-num  { width: 56px; color: #aaa; }
     .td-date { width: 130px; color: #4f6ef7; font-weight: 600; white-space: nowrap; }
     .td-title { font-weight: 500; }
-    .td-desc { color: #999; font-size: 0.85rem; }
-    .td-actions { width: 140px; }
+    .td-actions { width: 130px; white-space: nowrap; }
+
+    input[type="checkbox"] {
+      width: 16px; height: 16px; cursor: pointer; accent-color: #4f6ef7;
+    }
 
     /* ── 버튼 ── */
     .btn {
@@ -154,6 +224,7 @@
     .btn-save:hover { background: #219150; }
     .btn-cancel { background: #aaa; }
     .btn-cancel:hover { background: #888; }
+    .btn-add { background: #4f6ef7; padding: 8px 20px; font-size: 0.9rem; }
 
     /* ── 인라인 편집 입력 ── */
     .inline-input {
@@ -165,19 +236,6 @@
       background: #f7f9ff;
     }
 
-    /* ── 와이어프레임 주석 박스 ── */
-    .wf-note {
-      position: relative;
-      margin-top: 40px;
-      padding: 20px 24px;
-      background: #fff8e1;
-      border: 1.5px dashed #f0b429;
-      border-radius: 10px;
-    }
-    .wf-note h3 { font-size: 0.95rem; color: #b7860b; margin-bottom: 12px; }
-    .wf-note ul { padding-left: 18px; }
-    .wf-note li { font-size: 0.88rem; color: #7a6000; margin-bottom: 6px; line-height: 1.6; }
-
     /* ── 상태 라벨 ── */
     .state-badge {
       display: inline-block;
@@ -188,7 +246,18 @@
       margin-left: 6px;
     }
     .badge-edit { background: #fff3cd; color: #856404; }
-    .badge-normal { background: #e8f5e9; color: #256029; }
+
+    /* ── 와이어프레임 주석 박스 ── */
+    .wf-note {
+      margin-top: 40px;
+      padding: 20px 24px;
+      background: #fff8e1;
+      border: 1.5px dashed #f0b429;
+      border-radius: 10px;
+    }
+    .wf-note h3 { font-size: 0.95rem; color: #b7860b; margin-bottom: 12px; }
+    .wf-note ul { padding-left: 18px; }
+    .wf-note li { font-size: 0.88rem; color: #7a6000; margin-bottom: 6px; line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -205,35 +274,60 @@
   <div class="main">
     <h1 class="page-title">일정 관리</h1>
 
-    <!-- 툴바 영역 -->
-    <div class="toolbar">
-      <div class="filter-group">
-        <label>날짜 필터</label>
+    <!-- ① 신규 일정 등록 폼 -->
+    <div class="add-form">
+      <h2>신규 일정 등록</h2>
+      <div class="add-form-row">
+        <label>기간</label>
         <input type="date" value="2026-05-29" />
-        <button class="btn-clear">초기화</button>
+        <span class="date-range-sep">~</span>
+        <input type="date" value="2026-05-29" />
+        <label>제목</label>
+        <input type="text" placeholder="일정 제목을 입력하세요" />
+        <button class="btn btn-add">등록</button>
       </div>
-      <span class="total-count">전체 5건</span>
     </div>
 
-    <!-- 테이블 -->
+    <!-- ② 검색 툴바 (시작일~종료일) -->
+    <div class="toolbar">
+      <div class="filter-group">
+        <label>조회 기간</label>
+        <input type="date" value="2026-05-01" />
+        <span class="filter-sep">~</span>
+        <input type="date" value="2026-05-31" />
+        <button class="btn-clear">초기화</button>
+        <button class="btn" style="padding:6px 16px;font-size:0.85rem;">조회</button>
+      </div>
+      <div class="toolbar-right">
+        <span class="total-count">전체 5건</span>
+      </div>
+    </div>
+
+    <!-- ③ 일괄삭제 바 -->
+    <div class="bulk-bar">
+      <span class="bulk-count">2건 선택됨</span>
+      <button class="btn btn-danger" style="padding:5px 16px;font-size:0.83rem;">선택 삭제</button>
+    </div>
+
+    <!-- ④ 테이블 -->
     <table class="em-table">
       <thead>
         <tr>
+          <th class="td-chk"><input type="checkbox" title="전체 선택" checked /></th>
           <th class="td-num">번호</th>
           <th class="td-date">날짜</th>
           <th>제목</th>
-          <th>메모</th>
           <th class="td-actions">관리</th>
         </tr>
       </thead>
       <tbody>
 
-        <!-- 일반 행 -->
-        <tr>
+        <!-- 체크된 행 -->
+        <tr class="checked">
+          <td class="td-chk"><input type="checkbox" checked /></td>
           <td class="td-num">1</td>
           <td class="td-date">2026-05-26</td>
-          <td class="td-title">팀 회의 <span class="state-badge badge-normal">일반</span></td>
-          <td class="td-desc">주간 스프린트 점검</td>
+          <td class="td-title">팀 회의</td>
           <td class="td-actions">
             <button class="btn">수정</button>
             <button class="btn btn-danger">삭제</button>
@@ -242,14 +336,12 @@
 
         <!-- 인라인 편집 중인 행 -->
         <tr class="editing">
+          <td class="td-chk"><input type="checkbox" /></td>
           <td class="td-num">2</td>
           <td class="td-date">2026-05-27</td>
           <td>
             <input class="inline-input" value="고객사 미팅" />
             <span class="state-badge badge-edit">편집 중</span>
-          </td>
-          <td>
-            <input class="inline-input" value="오후 2시 / 강남역" />
           </td>
           <td class="td-actions">
             <button class="btn btn-save">저장</button>
@@ -259,21 +351,22 @@
 
         <!-- 일반 행 -->
         <tr>
+          <td class="td-chk"><input type="checkbox" /></td>
           <td class="td-num">3</td>
           <td class="td-date">2026-05-28</td>
           <td class="td-title">코드 리뷰</td>
-          <td class="td-desc">-</td>
           <td class="td-actions">
             <button class="btn">수정</button>
             <button class="btn btn-danger">삭제</button>
           </td>
         </tr>
 
-        <tr>
+        <!-- 체크된 행 -->
+        <tr class="checked">
+          <td class="td-chk"><input type="checkbox" checked /></td>
           <td class="td-num">4</td>
           <td class="td-date">2026-05-29</td>
           <td class="td-title">배포 작업</td>
-          <td class="td-desc">운영 서버 v1.2 배포</td>
           <td class="td-actions">
             <button class="btn">수정</button>
             <button class="btn btn-danger">삭제</button>
@@ -281,10 +374,10 @@
         </tr>
 
         <tr>
+          <td class="td-chk"><input type="checkbox" /></td>
           <td class="td-num">5</td>
           <td class="td-date">2026-05-30</td>
           <td class="td-title">휴가</td>
-          <td class="td-desc">-</td>
           <td class="td-actions">
             <button class="btn">수정</button>
             <button class="btn btn-danger">삭제</button>
@@ -298,12 +391,13 @@
     <div class="wf-note">
       <h3>와이어프레임 설명</h3>
       <ul>
-        <li><strong>툴바</strong> : 날짜 필터(date picker) + 초기화 버튼 / 우측 전체 건수 표시</li>
-        <li><strong>테이블 컬럼</strong> : 번호 · 날짜(날짜순 정렬) · 제목 · 메모 · 관리(수정/삭제)</li>
-        <li><strong>일반 상태</strong> : [수정] 클릭 → 해당 행이 인라인 편집 모드로 전환</li>
-        <li><strong>편집 상태</strong> : 제목·메모 인풋 활성화 + [저장] / [취소] 버튼 표시, 행 배경색 변경(주황빛)</li>
-        <li><strong>삭제</strong> : confirm 다이얼로그 후 행 제거 → 목록 자동 갱신</li>
-        <li><strong>날짜 필터</strong> : 선택한 날짜의 일정만 표시, 초기화 시 전체 목록 복원</li>
+        <li><strong>① 신규 등록 폼</strong> : 시작일~종료일(기본값 오늘) + 제목 입력 후 [등록] 클릭 → 목록 갱신</li>
+        <li><strong>② 조회 기간 필터</strong> : 시작일~종료일 범위로 검색, [초기화] 시 전체 복원</li>
+        <li><strong>③ 일괄삭제 바</strong> : 체크된 건수 표시, [선택 삭제] 클릭 → confirm 후 일괄 제거</li>
+        <li><strong>④ 체크박스</strong> : 헤더 체크박스로 전체 선택/해제, 체크된 행은 붉은 배경으로 표시</li>
+        <li><strong>제목/메모 통합</strong> : 기존 제목+메모 두 컬럼을 제목 단일 컬럼으로 통합</li>
+        <li><strong>인라인 편집</strong> : [수정] 클릭 시 해당 행 제목 인풋 활성화, [저장]/[취소] 버튼 표시</li>
+        <li><strong>개별 삭제</strong> : 행의 [삭제] 버튼 → confirm 후 단건 제거</li>
       </ul>
     </div>
 
