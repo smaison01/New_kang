@@ -5,359 +5,437 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>일정 관리 - 와이어프레임</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f5f6fa;
-      color: #333;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: #ffffff;
+      color: #37352f;
       display: flex;
       min-height: 100vh;
+      font-size: 14px;
     }
 
-    /* ── 사이드바 ── */
+    /* ───── 사이드바 ───── */
     .sidebar {
-      width: 200px;
+      width: 240px;
       min-height: 100vh;
-      background: #1a1a2e;
+      background: #f7f6f3;
       display: flex;
       flex-direction: column;
       position: fixed;
       top: 0; left: 0;
+      border-right: 1px solid #e9e9e7;
     }
-    .sidebar-logo {
-      color: white;
-      font-size: 1.2rem;
-      font-weight: 700;
-      padding: 28px 24px 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+    .sidebar-workspace {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 14px 10px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: #37352f;
+      border-bottom: 1px solid #e9e9e7;
+      margin-bottom: 4px;
+    }
+    .workspace-icon {
+      width: 24px; height: 24px;
+      background: #37352f;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 0.7rem; font-weight: 700;
+    }
+    .sidebar-section {
+      padding: 6px 8px 2px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #9b9a97;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
     .sidebar-item {
-      display: block;
-      color: rgba(255,255,255,0.55);
-      text-decoration: none;
-      padding: 14px 24px;
-      font-size: 0.92rem;
-      border-left: 3px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      font-size: 0.875rem;
+      color: #37352f;
+      border-radius: 4px;
+      margin: 1px 6px;
       cursor: pointer;
+      text-decoration: none;
     }
-    .sidebar-item:hover { background: rgba(255,255,255,0.07); color: white; }
-    .sidebar-item.active {
-      background: rgba(79,110,247,0.2);
-      color: #7b9fff;
-      border-left-color: #4f6ef7;
+    .sidebar-item:hover { background: #ebebea; }
+    .sidebar-item.active { background: #e9e9e7; font-weight: 500; }
+    .sidebar-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+    /* ───── 메인 콘텐츠 ───── */
+    .main {
+      margin-left: 240px;
+      flex: 1;
+      padding: 48px 96px;
+      max-width: 1200px;
     }
 
-    /* ── 메인 콘텐츠 ── */
-    .main { margin-left: 200px; flex: 1; padding: 40px 36px; }
-
+    /* ───── 페이지 헤더 ───── */
+    .page-header {
+      margin-bottom: 32px;
+    }
+    .page-emoji { font-size: 2.8rem; margin-bottom: 8px; }
     .page-title {
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 700;
-      color: #1a1a2e;
-      margin-bottom: 28px;
+      color: #37352f;
+      line-height: 1.2;
+    }
+    .page-desc {
+      margin-top: 6px;
+      font-size: 0.875rem;
+      color: #9b9a97;
     }
 
-    /* ── 신규 일정 등록 폼 ── */
-    .add-form {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 20px 24px;
-      margin-bottom: 16px;
+    /* ───── 구분선 ───── */
+    .divider {
+      border: none;
+      border-top: 1px solid #e9e9e7;
+      margin: 20px 0;
     }
-    .add-form h2 {
-      font-size: 1rem;
+
+    /* ───── 섹션 타이틀 ───── */
+    .section-label {
+      font-size: 0.78rem;
       font-weight: 600;
-      color: #1a1a2e;
-      margin-bottom: 14px;
+      color: #9b9a97;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    /* ───── 신규 등록 폼 ───── */
+    .add-form {
+      background: #f7f6f3;
+      border: 1px solid #e9e9e7;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
     }
     .add-form-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
-    .add-form-row label {
-      font-size: 0.85rem;
-      color: #555;
+    .form-label {
+      font-size: 0.8rem;
+      color: #9b9a97;
       white-space: nowrap;
+      font-weight: 500;
     }
-    .add-form-row input[type="date"],
-    .add-form-row input[type="text"] {
-      padding: 8px 10px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 0.88rem;
-      color: #333;
+    .notion-input {
+      padding: 6px 10px;
+      border: 1px solid #e9e9e7;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      color: #37352f;
+      background: #ffffff;
+      font-family: inherit;
+      transition: border-color 0.15s;
     }
-    .add-form-row input[type="text"] { flex: 1; min-width: 180px; }
-    .date-range-sep {
-      color: #aaa;
-      font-weight: 600;
-      font-size: 1rem;
-    }
+    .notion-input:focus { outline: none; border-color: #a8a29e; box-shadow: 0 0 0 2px rgba(37,99,235,0.1); }
+    .notion-input[type="text"] { flex: 1; min-width: 200px; }
+    .date-sep { color: #c7c4bf; font-size: 0.9rem; }
 
-    /* ── 검색 툴바 ── */
+    /* ───── 검색 툴바 ───── */
     .toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
-      background: white;
-      padding: 14px 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 8px;
       flex-wrap: wrap;
       gap: 10px;
     }
     .filter-group {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
-    .filter-group label {
-      font-size: 0.88rem;
-      color: #555;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-    .filter-group input[type="date"] {
-      padding: 7px 10px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 0.88rem;
-      color: #333;
-    }
-    .filter-sep { color: #aaa; font-weight: 600; }
-    .btn-clear {
-      padding: 6px 14px;
-      background: #eee;
-      color: #555;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.82rem;
-    }
-    .btn-clear:hover { background: #ddd; }
-    .toolbar-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .total-count {
-      font-size: 0.88rem;
-      color: #888;
-      background: #f0f3ff;
-      padding: 5px 12px;
-      border-radius: 20px;
-    }
 
-    /* ── 일괄삭제 버튼 영역 ── */
+    /* ───── 일괄삭제 바 ───── */
     .bulk-bar {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 10px;
       padding: 8px 4px;
+      margin-bottom: 6px;
+      min-height: 36px;
     }
     .bulk-count {
-      font-size: 0.85rem;
-      color: #e74c3c;
-      font-weight: 600;
+      font-size: 0.82rem;
+      color: #e03e3e;
+      font-weight: 500;
     }
 
-    /* ── 테이블 ── */
+    /* ───── 버튼 ───── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border: 1px solid #e9e9e7;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: #37352f;
+      background: #ffffff;
+      font-family: inherit;
+      transition: background 0.1s;
+      white-space: nowrap;
+    }
+    .btn:hover { background: #f1f1ef; }
+    .btn-primary {
+      background: #37352f;
+      color: #ffffff;
+      border-color: #37352f;
+    }
+    .btn-primary:hover { background: #1a1a18; }
+    .btn-danger-outline {
+      color: #e03e3e;
+      border-color: #ffa8a8;
+      background: #fff5f5;
+    }
+    .btn-danger-outline:hover { background: #ffe3e3; }
+    .btn-confirm {
+      background: #2eaadc;
+      color: #fff;
+      border-color: #2eaadc;
+    }
+    .btn-confirm:hover { background: #1c9bc9; }
+    .btn-sm { padding: 3px 10px; font-size: 0.78rem; }
+    .total-chip {
+      font-size: 0.78rem;
+      color: #9b9a97;
+      background: #f1f1ef;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid #e9e9e7;
+    }
+
+    /* ───── 테이블 ───── */
     .em-table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
-      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid #e9e9e7;
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
     }
     .em-table th {
-      background: #4f6ef7;
-      color: white;
-      padding: 13px 16px;
+      background: #f7f6f3;
+      color: #9b9a97;
+      padding: 10px 14px;
       text-align: left;
-      font-size: 0.88rem;
-      font-weight: 600;
-    }
-    .em-table td {
-      padding: 12px 16px;
-      border-bottom: 1px solid #f2f2f2;
-      font-size: 0.9rem;
-      vertical-align: middle;
-    }
-    .em-table tr:last-child td { border-bottom: none; }
-    .em-table tr:hover td { background: #f7f9ff; }
-    .em-table tr.editing td { background: #fffaf4; }
-    .em-table tr.checked td { background: #fff0f0; }
-
-    .td-chk  { width: 44px; text-align: center; }
-    .td-num  { width: 56px; color: #aaa; }
-    .td-date { width: 130px; color: #4f6ef7; font-weight: 600; white-space: nowrap; }
-    .td-title { font-weight: 500; }
-    .td-actions { width: 130px; white-space: nowrap; }
-
-    input[type="checkbox"] {
-      width: 16px; height: 16px; cursor: pointer; accent-color: #4f6ef7;
-    }
-
-    /* ── 버튼 ── */
-    .btn {
-      padding: 5px 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.82rem;
-      color: white;
-      background: #4f6ef7;
-      margin-right: 4px;
-    }
-    .btn:hover { background: #3a58e0; }
-    .btn-danger { background: #e74c3c; }
-    .btn-danger:hover { background: #c0392b; }
-    .btn-save { background: #27ae60; }
-    .btn-save:hover { background: #219150; }
-    .btn-cancel { background: #aaa; }
-    .btn-cancel:hover { background: #888; }
-    .btn-add { background: #4f6ef7; padding: 8px 20px; font-size: 0.9rem; }
-
-    /* ── 인라인 편집 입력 ── */
-    .inline-input {
-      width: 100%;
-      padding: 6px 10px;
-      border: 1.5px solid #4f6ef7;
-      border-radius: 6px;
-      font-size: 0.88rem;
-      background: #f7f9ff;
-    }
-
-    /* ── 상태 라벨 ── */
-    .state-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
       font-size: 0.75rem;
       font-weight: 600;
-      margin-left: 6px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-bottom: 1px solid #e9e9e7;
     }
-    .badge-edit { background: #fff3cd; color: #856404; }
+    .em-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #f1f1ef;
+      font-size: 0.875rem;
+      vertical-align: middle;
+      color: #37352f;
+    }
+    .em-table tbody tr:last-child td { border-bottom: none; }
+    .em-table tbody tr:hover td { background: #f7f6f3; }
+    .em-table tr.editing td { background: #fffbeb; }
+    .em-table tr.checked td { background: #fef9f9; }
 
-    /* ── 와이어프레임 주석 박스 ── */
+    .td-chk  { width: 40px; text-align: center; }
+    .td-num  { width: 50px; color: #c7c4bf; font-size: 0.8rem; }
+    .td-date { width: 120px; font-weight: 500; color: #37352f; white-space: nowrap; }
+    .td-actions { width: 120px; white-space: nowrap; }
+
+    .date-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f1f1ef;
+      border: 1px solid #e9e9e7;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.8rem;
+      color: #37352f;
+      font-weight: 500;
+    }
+
+    input[type="checkbox"] {
+      width: 15px; height: 15px;
+      cursor: pointer;
+      accent-color: #37352f;
+      border-radius: 3px;
+    }
+
+    /* ───── 인라인 편집 ───── */
+    .inline-input {
+      width: 100%;
+      padding: 5px 8px;
+      border: 1px solid #a8a29e;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      background: #ffffff;
+      font-family: inherit;
+      color: #37352f;
+    }
+    .inline-input:focus { outline: none; border-color: #2eaadc; box-shadow: 0 0 0 2px rgba(46,170,220,0.15); }
+
+    .editing-badge {
+      display: inline-block;
+      padding: 1px 6px;
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      border-radius: 3px;
+      font-size: 0.72rem;
+      color: #92400e;
+      font-weight: 500;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .checked-badge {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: #e03e3e;
+      border-radius: 50%;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    /* ───── 와이어프레임 노트 ───── */
     .wf-note {
       margin-top: 40px;
-      padding: 20px 24px;
-      background: #fff8e1;
-      border: 1.5px dashed #f0b429;
-      border-radius: 10px;
+      padding: 16px 20px;
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 6px;
     }
-    .wf-note h3 { font-size: 0.95rem; color: #b7860b; margin-bottom: 12px; }
-    .wf-note ul { padding-left: 18px; }
-    .wf-note li { font-size: 0.88rem; color: #7a6000; margin-bottom: 6px; line-height: 1.6; }
+    .wf-note-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #92400e;
+      margin-bottom: 10px;
+    }
+    .wf-note ul { padding-left: 16px; }
+    .wf-note li {
+      font-size: 0.82rem;
+      color: #78350f;
+      margin-bottom: 5px;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
 
   <!-- 사이드바 -->
   <aside class="sidebar">
-    <div class="sidebar-logo">My App</div>
-    <a class="sidebar-item">게시판</a>
-    <a class="sidebar-item">캘린더</a>
-    <a class="sidebar-item active">일정 관리</a>
+    <div class="sidebar-workspace">
+      <div class="workspace-icon">M</div>
+      My App
+    </div>
+
+    <div style="padding: 8px 6px 4px;">
+      <a class="sidebar-item">
+        <span class="sidebar-icon">📋</span> 게시판
+      </a>
+      <a class="sidebar-item">
+        <span class="sidebar-icon">📅</span> 캘린더
+      </a>
+      <a class="sidebar-item active">
+        <span class="sidebar-icon">🗂️</span> 일정 관리
+      </a>
+    </div>
   </aside>
 
   <!-- 메인 -->
   <div class="main">
-    <h1 class="page-title">일정 관리</h1>
 
-    <!-- ① 신규 일정 등록 폼 -->
+    <!-- 페이지 헤더 -->
+    <div class="page-header">
+      <div class="page-emoji">🗂️</div>
+      <h1 class="page-title">일정 관리</h1>
+      <p class="page-desc">전체 일정을 조회하고 관리합니다.</p>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ① 신규 일정 등록 -->
+    <div class="section-label">신규 일정 등록</div>
     <div class="add-form">
-      <h2>신규 일정 등록</h2>
       <div class="add-form-row">
-        <label>기간</label>
-        <input type="date" value="2026-05-29" />
-        <span class="date-range-sep">~</span>
-        <input type="date" value="2026-05-29" />
-        <label>제목</label>
-        <input type="text" placeholder="일정 제목을 입력하세요" />
-        <button class="btn btn-add">등록</button>
+        <span class="form-label">기간</span>
+        <input class="notion-input" type="date" value="2026-05-29" />
+        <span class="date-sep">→</span>
+        <input class="notion-input" type="date" value="2026-05-29" />
+        <span class="form-label" style="margin-left:8px;">내용</span>
+        <input class="notion-input" type="text" placeholder="일정 내용을 입력하세요" />
+        <button class="btn btn-primary">+ 등록</button>
       </div>
     </div>
 
-    <!-- ② 검색 툴바 (시작일~종료일) -->
+    <hr class="divider" />
+
+    <!-- ② 검색 조건 -->
+    <div class="section-label">조회 조건</div>
     <div class="toolbar">
       <div class="filter-group">
-        <label>조회 기간</label>
-        <input type="date" value="2026-05-01" />
-        <span class="filter-sep">~</span>
-        <input type="date" value="2026-05-31" />
-        <button class="btn-clear">초기화</button>
-        <button class="btn" style="padding:6px 16px;font-size:0.85rem;">조회</button>
+        <input class="notion-input" type="date" value="2026-05-01" />
+        <span class="date-sep">→</span>
+        <input class="notion-input" type="date" value="2026-05-31" />
+        <button class="btn btn-confirm btn-sm">조회</button>
+        <button class="btn btn-sm">초기화</button>
       </div>
-      <div class="toolbar-right">
-        <span class="total-count">전체 5건</span>
-      </div>
+      <span class="total-chip">전체 5건</span>
     </div>
 
     <!-- ③ 일괄삭제 바 -->
     <div class="bulk-bar">
+      <span class="checked-badge"></span>
       <span class="bulk-count">2건 선택됨</span>
-      <button class="btn btn-danger" style="padding:5px 16px;font-size:0.83rem;">선택 삭제</button>
+      <button class="btn btn-danger-outline btn-sm">선택 삭제</button>
     </div>
 
-    <!-- ④ 테이블 -->
+    <!-- ④ 테이블 (날짜 desc) -->
     <table class="em-table">
       <thead>
         <tr>
-          <th class="td-chk"><input type="checkbox" title="전체 선택" checked /></th>
-          <th class="td-num">번호</th>
-          <th class="td-date">날짜</th>
-          <th>제목</th>
+          <th class="td-chk">
+            <input type="checkbox" title="전체 선택" checked />
+          </th>
+          <th class="td-num">#</th>
+          <th class="td-date">날짜 ↓</th>
+          <th>내용</th>
           <th class="td-actions">관리</th>
         </tr>
       </thead>
       <tbody>
 
-        <!-- 체크된 행 -->
-        <tr class="checked">
-          <td class="td-chk"><input type="checkbox" checked /></td>
-          <td class="td-num">1</td>
-          <td class="td-date">2026-05-26</td>
-          <td class="td-title">팀 회의</td>
-          <td class="td-actions">
-            <button class="btn">수정</button>
-            <button class="btn btn-danger">삭제</button>
-          </td>
-        </tr>
-
-        <!-- 인라인 편집 중인 행 -->
-        <tr class="editing">
-          <td class="td-chk"><input type="checkbox" /></td>
-          <td class="td-num">2</td>
-          <td class="td-date">2026-05-27</td>
-          <td>
-            <input class="inline-input" value="고객사 미팅" />
-            <span class="state-badge badge-edit">편집 중</span>
-          </td>
-          <td class="td-actions">
-            <button class="btn btn-save">저장</button>
-            <button class="btn btn-cancel">취소</button>
-          </td>
-        </tr>
-
         <!-- 일반 행 -->
         <tr>
           <td class="td-chk"><input type="checkbox" /></td>
-          <td class="td-num">3</td>
-          <td class="td-date">2026-05-28</td>
-          <td class="td-title">코드 리뷰</td>
+          <td class="td-num">5</td>
+          <td class="td-date">
+            <span class="date-tag">📅 2026-05-30</span>
+          </td>
+          <td>휴가</td>
           <td class="td-actions">
-            <button class="btn">수정</button>
-            <button class="btn btn-danger">삭제</button>
+            <button class="btn btn-sm">수정</button>
+            <button class="btn btn-danger-outline btn-sm">삭제</button>
           </td>
         </tr>
 
@@ -365,39 +443,76 @@
         <tr class="checked">
           <td class="td-chk"><input type="checkbox" checked /></td>
           <td class="td-num">4</td>
-          <td class="td-date">2026-05-29</td>
-          <td class="td-title">배포 작업</td>
+          <td class="td-date">
+            <span class="date-tag">📅 2026-05-29</span>
+          </td>
+          <td>배포 작업</td>
           <td class="td-actions">
-            <button class="btn">수정</button>
-            <button class="btn btn-danger">삭제</button>
+            <button class="btn btn-sm">수정</button>
+            <button class="btn btn-danger-outline btn-sm">삭제</button>
           </td>
         </tr>
 
+        <!-- 인라인 편집 중인 행 -->
+        <tr class="editing">
+          <td class="td-chk"><input type="checkbox" /></td>
+          <td class="td-num">3</td>
+          <td class="td-date">
+            <span class="date-tag">📅 2026-05-28</span>
+          </td>
+          <td>
+            <input class="inline-input" value="코드 리뷰" />
+            <span class="editing-badge">편집 중</span>
+          </td>
+          <td class="td-actions">
+            <button class="btn btn-confirm btn-sm">저장</button>
+            <button class="btn btn-sm">취소</button>
+          </td>
+        </tr>
+
+        <!-- 체크된 행 -->
+        <tr class="checked">
+          <td class="td-chk"><input type="checkbox" checked /></td>
+          <td class="td-num">2</td>
+          <td class="td-date">
+            <span class="date-tag">📅 2026-05-27</span>
+          </td>
+          <td>고객사 미팅</td>
+          <td class="td-actions">
+            <button class="btn btn-sm">수정</button>
+            <button class="btn btn-danger-outline btn-sm">삭제</button>
+          </td>
+        </tr>
+
+        <!-- 일반 행 -->
         <tr>
           <td class="td-chk"><input type="checkbox" /></td>
-          <td class="td-num">5</td>
-          <td class="td-date">2026-05-30</td>
-          <td class="td-title">휴가</td>
+          <td class="td-num">1</td>
+          <td class="td-date">
+            <span class="date-tag">📅 2026-05-26</span>
+          </td>
+          <td>팀 회의</td>
           <td class="td-actions">
-            <button class="btn">수정</button>
-            <button class="btn btn-danger">삭제</button>
+            <button class="btn btn-sm">수정</button>
+            <button class="btn btn-danger-outline btn-sm">삭제</button>
           </td>
         </tr>
 
       </tbody>
     </table>
 
-    <!-- 와이어프레임 설명 -->
+    <!-- 와이어프레임 설명 노트 -->
     <div class="wf-note">
-      <h3>와이어프레임 설명</h3>
+      <div class="wf-note-title">💡 와이어프레임 설명</div>
       <ul>
-        <li><strong>① 신규 등록 폼</strong> : 시작일~종료일(기본값 오늘) + 제목 입력 후 [등록] 클릭 → 목록 갱신</li>
-        <li><strong>② 조회 기간 필터</strong> : 시작일~종료일 범위로 검색, [초기화] 시 전체 복원</li>
-        <li><strong>③ 일괄삭제 바</strong> : 체크된 건수 표시, [선택 삭제] 클릭 → confirm 후 일괄 제거</li>
-        <li><strong>④ 체크박스</strong> : 헤더 체크박스로 전체 선택/해제, 체크된 행은 붉은 배경으로 표시</li>
-        <li><strong>제목/메모 통합</strong> : 기존 제목+메모 두 컬럼을 제목 단일 컬럼으로 통합</li>
-        <li><strong>인라인 편집</strong> : [수정] 클릭 시 해당 행 제목 인풋 활성화, [저장]/[취소] 버튼 표시</li>
-        <li><strong>개별 삭제</strong> : 행의 [삭제] 버튼 → confirm 후 단건 제거</li>
+        <li><strong>신규 등록</strong> : 시작일 → 종료일(기본값 오늘) + 내용 입력 → [+ 등록] 클릭</li>
+        <li><strong>조회 기간</strong> : 시작일 → 종료일 범위 검색, [초기화] 시 전체 복원</li>
+        <li><strong>날짜 정렬</strong> : 기본 날짜 내림차순(최신순) 조회 — 헤더 "날짜 ↓" 로 표시</li>
+        <li><strong>컬럼</strong> : 체크박스 · # · 날짜 · 내용(제목+메모 통합) · 관리</li>
+        <li><strong>멀티 체크박스</strong> : 헤더 체크로 전체 선택/해제, 선택 행은 연분홍 배경</li>
+        <li><strong>일괄 삭제</strong> : 선택 건수 + [선택 삭제] → confirm 후 일괄 제거</li>
+        <li><strong>인라인 편집</strong> : [수정] 클릭 → 해당 행 내용 인풋 활성화(노란 배경)</li>
+        <li><strong>디자인</strong> : Notion 스타일 — 흰 배경, 회색 사이드바, 미니멀 보더, Inter 폰트</li>
       </ul>
     </div>
 
